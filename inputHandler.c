@@ -62,7 +62,7 @@ struct Args parseArguements(char *line){
     {
         args[position++] = field;
     }
-
+    args[position] = NULL;
 
     parseArgs.argc = position;
     parseArgs.argv = args;
@@ -71,16 +71,35 @@ struct Args parseArguements(char *line){
     return parseArgs;
 }
 
-void interactiveLoop(int status) {
+void interactiveLoop(int status, int argc, char **argv) {
     char *line;
     struct Args args;
+    FILE *fp;
+    int limit;
 
-    do
-    {
-        printf("wish>");
-        line = readLine();
-        args=parseArguements(line);
-        status = childProcess(args);
-    } while (status);
+    limit = sizeof(char)*BUFSIZ;
+
+
+    if(argc == 1){
+        do
+        {
+            printf("wish>");
+            line = readLine();
+            args=parseArguements(line);
+            status = childProcess(args);
+        } while (status);
+    } else {
+        fp = fopen(argv[1],  "r");
+        line = malloc(limit+1);
+        if (line == NULL){
+            errExit("Error: ");
+        } 
+
+        while ( fgets(line, limit + 1, fp) != NULL ){
+            args=parseArguements(line);
+            status = childProcess(args);
+        }
+        
+    }
     
 }

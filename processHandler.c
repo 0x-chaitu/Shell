@@ -22,7 +22,6 @@ int childProcess(struct Args args)
 
 
 
-
     if((rc = fork()) == -1){
         errExit("Error: ");
     }else if( rc == 0  ) {
@@ -33,15 +32,23 @@ int childProcess(struct Args args)
                 if (execv(args.argv[0], args.argv) == -1){
                     errExit("Error: ");
                 }
-            }else {
+            }
+            else {
                 if (access(path, X_OK) == 0){
                     if (execv(path, args.argv) == -1){
                         errExit("Error: ");
                     }
-                }else {
+                }
+                else {
                     if (strcmp(args.argv[0], "exit") == 0){
                         exit(SIGUSR1);
-                    }else errExit("Error: ");
+                    } else if (strcmp(args.argv[0], "cd") == 0) {
+
+                        if (args.argv[1] == NULL || args.argv[2] != NULL) errExit("Error: ");
+                        if (chdir(args.argv[1]) == -1){
+                            errExit("Error: ");
+                        }
+                    }else  errExit("Error: ");
                 }
             }
 
