@@ -99,6 +99,9 @@ void interactiveLoop(int status, int argc, char **argv) {
             args=parseArguements(line);
             status = childProcess(args);
         }
+        fclose(fp);
+        free(line);
+        free(args.argv);
         
     }
     

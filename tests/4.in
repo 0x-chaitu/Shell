@@ -1,2 +1,1 @@
-cd tests/p2a-test
-ls
+sleep 4
